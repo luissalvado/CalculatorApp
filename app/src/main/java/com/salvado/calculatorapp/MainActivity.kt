@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
     // Java way , initialize the variable to null
@@ -19,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 
     // Variables to hold the operands and type of calculation
     private var operand1: Double? = null // because can be a number or signal
-    private var operand2: Double = 0.0
     private var pendingOperation = "="
 
 
@@ -70,10 +70,13 @@ class MainActivity : AppCompatActivity() {
 
         val opListener = View.OnClickListener { v ->
             val op = (v as Button).text.toString()
-            val value = newNumber.text.toString()
-            if (value.isNotEmpty()) {
+            try {
+                val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
+            } catch (e: NumberFormatException) {
+                newNumber.setText("")
             }
+
             pendingOperation = op
             displayOperation.text = pendingOperation
         }
@@ -85,27 +88,25 @@ class MainActivity : AppCompatActivity() {
         buttonPlus.setOnClickListener(opListener)
     }
 
-    private fun performOperation(value: String, operation: String) {
+    private fun performOperation(value: Double, operation: String) {
         // checks if the first operand is null
         if (operand1 == null) {
-            operand1 = value.toDouble()
+            operand1 = value
         } else {
-            operand2 = value.toDouble()
-
             if (pendingOperation == "=") {
                 pendingOperation = operation
             }
 
             when (pendingOperation) {
-                "=" -> operand1 = operand2
-                "/" -> if (operand2 == 0.0) {
-                            operand1 = Double.NaN // handle attempt to divide by zero
-                       } else {
-                            operand1 = operand1!! / operand2
-                       }
-                "*" -> operand1 = operand1!! * operand2
-                "-" -> operand1 = operand1!! - operand2
-                "+" -> operand1 = operand1!! + operand2
+                "=" -> operand1 = value
+                "/" -> operand1 = if (value == 0.0) {
+                    Double.NaN // handle attempt to divide by zero
+                } else {
+                    operand1!! / value
+                }
+                "*" -> operand1 = operand1!! * value
+                "-" -> operand1 = operand1!! - value
+                "+" -> operand1 = operand1!! + value
                 // !! gives you a way to convert a nullable type to its non-nullable equivalent
             }
         }
