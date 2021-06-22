@@ -13,8 +13,9 @@ class MainActivity : AppCompatActivity() {
     // Kotlin way, used late init type
     private lateinit var result: EditText
     private lateinit var newNumber: EditText
+
     // Lazy properties: the value gets computed only upon first access.
-    private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation)}
+    private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
 
     // Variables to hold the operands and type of calculation
     private var operand1: Double? = null // because can be a number or signal
@@ -68,10 +69,10 @@ class MainActivity : AppCompatActivity() {
         buttonDot.setOnClickListener(listener)
 
         val opListener = View.OnClickListener { v ->
-            val op = ( v as Button ).text.toString()
+            val op = (v as Button).text.toString()
             val value = newNumber.text.toString()
             if (value.isNotEmpty()) {
-                performOperation( value, op)
+                performOperation(value, op)
             }
             pendingOperation = op
             displayOperation.text = pendingOperation
@@ -84,7 +85,31 @@ class MainActivity : AppCompatActivity() {
         buttonPlus.setOnClickListener(opListener)
     }
 
-    private fun performOperation(value: String, operation: String){
-        displayOperation.text = operation
+    private fun performOperation(value: String, operation: String) {
+        // checks if the first operand is null
+        if (operand1 == null) {
+            operand1 = value.toDouble()
+        } else {
+            operand2 = value.toDouble()
+
+            if (pendingOperation == "=") {
+                pendingOperation = operation
+            }
+
+            when (pendingOperation) {
+                "=" -> operand1 = operand2
+                "/" -> if (operand2 == 0.0) {
+                            operand1 = Double.NaN // handle attempt to divide by zero
+                       } else {
+                            operand1 = operand1!! / operand2
+                       }
+                "*" -> operand1 = operand1!! * operand2
+                "-" -> operand1 = operand1!! - operand2
+                "+" -> operand1 = operand1!! + operand2
+                // !! gives you a way to convert a nullable type to its non-nullable equivalent
+            }
+        }
+        result.setText(operand1.toString())
+        newNumber.setText("")
     }
 }
