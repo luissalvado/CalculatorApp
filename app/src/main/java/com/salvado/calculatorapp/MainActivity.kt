@@ -1,12 +1,10 @@
 package com.salvado.calculatorapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import java.lang.NumberFormatException
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
 // to save values when change from landscape to portrait
 // create const
@@ -18,11 +16,11 @@ class MainActivity : AppCompatActivity() {
     // Java way , initialize the variable to null
     // private var result: EditText? = null
     // Kotlin way, used late init type
-    private lateinit var result: EditText
-    private lateinit var newNumber: EditText
+    //private lateinit var result: EditText
+    //private lateinit var newNumber: EditText
 
     // Lazy properties: the value gets computed only upon first access.
-    private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
+    //private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
 
     // Variables to hold the operands and type of calculation
     private var operand1: Double? = null // because can be a number or signal
@@ -33,21 +31,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        result = findViewById(R.id.result)
-        newNumber = findViewById(R.id.newNumber)
-
-        // Data input numbers
-        val button0: Button = findViewById(R.id.button0)
-        val button1: Button = findViewById(R.id.button1)
-        val button2: Button = findViewById(R.id.button2)
-        val button3: Button = findViewById(R.id.button3)
-        val button4: Button = findViewById(R.id.button4)
-        val button5: Button = findViewById(R.id.button5)
-        val button6: Button = findViewById(R.id.button6)
-        val button7: Button = findViewById(R.id.button7)
-        val button8: Button = findViewById(R.id.button8)
-        val button9: Button = findViewById(R.id.button9)
-        val buttonDot: Button = findViewById(R.id.buttonDot)
+//        result = findViewById(R.id.result)
+//        newNumber = findViewById(R.id.newNumber)
+//
+//        // Data input numbers
+//        val button0: Button = findViewById(R.id.button0)
+//        val button1: Button = findViewById(R.id.button1)
+//        val button2: Button = findViewById(R.id.button2)
+//        val button3: Button = findViewById(R.id.button3)
+//        val button4: Button = findViewById(R.id.button4)
+//        val button5: Button = findViewById(R.id.button5)
+//        val button6: Button = findViewById(R.id.button6)
+//        val button7: Button = findViewById(R.id.button7)
+//        val button8: Button = findViewById(R.id.button8)
+//        val button9: Button = findViewById(R.id.button9)
+//        val buttonDot: Button = findViewById(R.id.buttonDot)
 
         // Operation Buttons
         val buttonEquals: Button = findViewById(R.id.buttonEquals)
@@ -84,7 +82,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             pendingOperation = op
-            displayOperation.text = pendingOperation
+            //displayOperation.text = pendingOperation
+            operation.text = pendingOperation
         }
 
         buttonEquals.setOnClickListener(opListener)
@@ -124,7 +123,7 @@ class MainActivity : AppCompatActivity() {
     // override onSaveInstanceState
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (operand1 != null){
+        if (operand1 != null) {
             outState.putDouble(STATE_OPERAND1, operand1!!)
             outState.putBoolean(STATE_OPERAND1_STORED, true)
         }
@@ -133,12 +132,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        operand1 = if (savedInstanceState.getBoolean(STATE_OPERAND1_STORED, false)){
+        operand1 = if (savedInstanceState.getBoolean(STATE_OPERAND1_STORED, false)) {
             savedInstanceState.getDouble(STATE_PENDING_OPERATION)
         } else {
             null
         }
         pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION) ?: ""
-        displayOperation.text = pendingOperation
+        //displayOperation.text = pendingOperation
+        operation.text = pendingOperation
     }
 }
